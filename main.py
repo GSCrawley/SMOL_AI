@@ -2,11 +2,12 @@ import sys
 import os
 import modal
 import ast
+import time 
 
 stub = modal.Stub("smol-developer-v1")
 generatedDir = "generated"
 openai_image = modal.Image.debian_slim().pip_install("openai", "tiktoken")
-openai_model = "gpt-4" # or 'gpt-3.5-turbo',
+openai_model = "gpt-3.5-turbo",
 openai_model_max_tokens = 2000 # i wonder how to tweak this properly
 
 
@@ -53,13 +54,17 @@ def generate_response(system_prompt, user_prompt, *args):
         "temperature": 0,
     }
 
-    # Send the API request
     response = openai.ChatCompletion.create(**params)
-
-    # Get the reply from the API response
+    time.sleep(1)  # Add a delay of 1 second between API calls
     reply = response.choices[0]["message"]["content"]
     return reply
 
+  # # Send the API request
+  #   response = openai.ChatCompletion.create(**params)
+
+  #   # Get the reply from the API response
+  #   reply = response.choices[0]["message"]["content"]
+  #   return reply
 
 @stub.function()
 def generate_file(filename, filepaths_string=None, shared_dependencies=None, prompt=None):
